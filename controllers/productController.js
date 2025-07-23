@@ -28,8 +28,8 @@ exports.getAllProducts = async (req, res) => {
     const [rows] = await db.query('SELECT * FROM products ORDER BY created_at DESC');
     res.json(rows);
   } catch (err) {
-    console.error('Error fetching products:', err);
-    res.status(500).json({ error: 'Failed to fetch products.' });
+    console.error('Error fetching products:', err.message);
+    res.status(500).json({ error: 'server error.' });
   }
 };
 

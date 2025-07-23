@@ -8,6 +8,10 @@ router.post('/', productController.addProduct); // POST /api/products
 // 📦 Get all products
 router.get('/', productController.getAllProducts); // GET /api/products
 
+router.get('/test', (req, res) => {
+  res.send('Products route is working ✅');
+});
+
 // 🔍 Get a single product by ID
 router.get('/:id', productController.getProductById); // GET /api/products/:id
 
