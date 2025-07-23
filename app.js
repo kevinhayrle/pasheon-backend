@@ -44,7 +44,9 @@ app.get('/', (req, res) => {
   res.send('Pasheon backend is running ✅');
 });
 
-const PORT = process.env.PORT || 3000;
+const PORT = process.env.PORT;
+if (!PORT) {
+  throw new Error("❌ Render's PORT is not defined in environment"); }
 app.listen(PORT, () => {
   console.log(`🚀 Pasheon backend running on port ${PORT}`);
 });
