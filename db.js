@@ -17,20 +17,25 @@ const pool = mysql.createPool({
   port: 17313,
   user: 'avnadmin',
   password: process.env.DB_PASSWORD,
-  database: 'pasheon_db', // or whatever you named it
+  database: 'pasheon_db',
   ssl: sslConfig,
   waitForConnections: true,
   connectionLimit: 10,
   queueLimit: 0
 });
 
-pool.getConnection()
-  .then(conn => {
+// Export the pool
+module.exports = pool;
+
+// OPTIONAL: Health check function (you can call this manually in app.js if needed)
+async function testConnection() {
+  try {
+    const conn = await pool.getConnection();
     console.log('✅ Connected to Pasheon DB via pool');
     conn.release();
-  })
-  .catch(err => {
+  } catch (err) {
     console.error('❌ Failed to connect to DB:', err.message);
-  });
+  }
+}
 
-module.exports = pool;
+// Not called automatically anymore
