@@ -7,6 +7,6 @@ router.get('/test', (req, res) => {
   res.send('✅ Admin route working');
 });
 
-router.post('/login', adminAuthController.login);
+router.post('/login', adminAuthController.adminLogin);
 
 module.exports = router;

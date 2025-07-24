@@ -1,17 +1,14 @@
+// app.js
+
 const express = require('express');
 const cors = require("cors");
 require('dotenv').config();
 
-const app = express();  // ✅ Initialize app first
+const app = express();
 console.log('👋 Pasheon backend started');
 
-// ✅ Now require and mount adminRoutes
-const adminRoutes = require('./routes/adminRoutes');
-app.use('/api/admin', adminRoutes);
-console.log('✅ Admin routes mounted');
-
 const allowedOrigins = [
-  'https://kevinhayrle.github.io'
+  'https://kevinhayrle.github.io'  // You can add more frontends here
 ];
 
 app.use(cors({
@@ -32,9 +29,11 @@ console.log('✅ express.json middleware loaded');
 
 // Register routes
 try {
+  const adminRoutes = require('./routes/adminRoutes');
   const authRoutes = require('./routes/auth');
   const productRoutes = require('./routes/productRoutes');
 
+  app.use('/api/admin', adminRoutes);
   app.use('/api/auth', authRoutes);
   app.use('/api/products', productRoutes);
   console.log('✅ Routes registered');
@@ -49,8 +48,7 @@ app.get('/', (req, res) => {
 
 const PORT = process.env.PORT;
 if (!PORT) {
-  throw new Error("❌ Render's PORT is not defined in environment");
-}
+  throw new Error("❌ Render's PORT is not defined in environment"); }
 app.listen(PORT, () => {
   console.log(`🚀 Pasheon backend running on port ${PORT}`);
 });
