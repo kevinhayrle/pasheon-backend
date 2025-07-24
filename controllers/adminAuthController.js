@@ -1,5 +1,11 @@
 const db = require('../db');
 const bcrypt = require('bcryptjs');
+console.log('Admin record from DB:', admin);
+console.log('Entered password:', password);
+console.log('Stored hashed password:', admin.password);
+
+const isMatch = await bcrypt.compare(password, admin.password);
+console.log('Password match result:', isMatch);
 const jwt = require('jsonwebtoken');
 require('dotenv').config();
 
