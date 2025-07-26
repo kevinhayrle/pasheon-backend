@@ -6,7 +6,6 @@ const {
   getAllProducts,
   deleteProduct,
   addProduct,
-  updateProduct
 } = require('../controllers/adminProductController');
 
 // Admin login
