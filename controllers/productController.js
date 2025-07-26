@@ -33,18 +33,30 @@ exports.getAllProducts = async (req, res) => {
   }
 };
 
-// 🔍 Get single product by ID
+// 🔍 Get single product by ID (with extra images)
 exports.getProductById = async (req, res) => {
   const { id } = req.params;
 
   try {
+    // 1. Get the main product
     const [rows] = await db.query('SELECT * FROM products WHERE product_id = ?', [id]);
 
     if (rows.length === 0) {
       return res.status(404).json({ error: 'Product not found.' });
     }
 
-    res.json(rows[0]);
+    const product = rows[0];
+
+    // 2. Get all extra images for this product
+    const [imageRows] = await db.query(
+      'SELECT image_url FROM product_images WHERE product_id = ?',
+      [id]
+    );
+
+    // 3. Format the result to include extra images
+    product.extra_images = imageRows.map(row => row.image_url);
+
+    res.json(product);
   } catch (err) {
     console.error('Error fetching product by ID:', err);
     res.status(500).json({ error: 'Server error.' });
