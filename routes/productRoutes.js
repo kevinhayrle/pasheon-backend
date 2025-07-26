@@ -2,27 +2,24 @@ const express = require('express');
 const router = express.Router();
 const productController = require('../controllers/productController');
 
+// 🔄 Test route
 router.get('/test', (req, res) => {
-  res.json({ message: '✅ Product test route works!' });
+  res.json({ message: '✅ Product route is working!' });
 });
 
-// ➕ Add a new product
-router.post('/', productController.addProduct); // POST /api/products
+// ➕ Add a new product (POST /api/products)
+router.post('/', productController.addProduct);
 
-// 📦 Get all products
-router.get('/', productController.getAllProducts); // GET /api/products
-
-router.get('/test', (req, res) => {
-  res.send('Products route is working ✅');
-});
+// 📦 Get all products (GET /api/products)
+router.get('/', productController.getAllProducts);
 
 // 🔍 Get a single product by ID
-router.get('/:id', productController.getProductById); // GET /api/products/:id
+router.get('/:id', productController.getProductById);
 
 // ✏ Update a product
-router.put('/:id', productController.updateProduct); // PUT /api/products/:id
+router.put('/:id', productController.updateProduct);
 
 // ❌ Delete a product
-router.delete('/:id', productController.deleteProduct); // DELETE /api/products/:id
+router.delete('/:id', productController.deleteProduct);
 
 module.exports = router;
