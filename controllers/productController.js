@@ -138,3 +138,20 @@ exports.getCategories = async (req, res) => {
     res.status(500).json({ error: 'Server error while fetching categories.' });
   }
 };
+
+// Get all unique product categories
+const getAllCategories = async (req, res) => {
+  try {
+    const [rows] = await pool.query("SELECT DISTINCT category FROM products");
+    const categories = rows.map(row => row.category);
+    res.json(categories);
+  } catch (error) {
+    console.error("Error fetching categories:", error);
+    res.status(500).json({ error: "Internal Server Error" });
+  }
+};
+
+module.exports = {
+  // existing exports...
+  getAllCategories, // 👈 Add this
+};
