@@ -80,15 +80,3 @@ exports.deleteProduct = async (req, res) => {
     res.status(500).json({ error: 'Failed to delete product.' });
   }
 };
-
-// 🧩 Get distinct categories from the products
-exports.getCategories = async (req, res) => {
-  try {
-    const [rows] = await db.query('SELECT DISTINCT category FROM products WHERE category IS NOT NULL');
-    const categories = rows.map(row => row.category);
-    res.json(categories);
-  } catch (err) {
-    console.error('Error fetching categories:', err);
-    res.status(500).json({ error: 'Server error while fetching categories.' });
-  }
-};
