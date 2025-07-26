@@ -1,4 +1,4 @@
-const db = require('../config/db');
+const db = require('../db');
 
 // Get all products
 const getAllProducts = (req, res) => {
