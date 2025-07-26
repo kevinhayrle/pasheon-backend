@@ -1,6 +1,13 @@
 const express = require('express');
 const router = express.Router();
-const productController = require('../controllers/productController');
+const {
+  addProduct,
+  getAllProducts,
+  getProductById,
+  getCategories,
+  updateProduct,
+  deleteProduct
+} = require('../controllers/productController');
 
 // 🔄 Test route
 router.get('/test', (req, res) => {
@@ -8,20 +15,21 @@ router.get('/test', (req, res) => {
 });
 
 // ➕ Add a new product (POST /api/products)
-router.post('/', productController.addProduct);
+router.post('/', addProduct);
 
 // 📦 Get all products (GET /api/products)
-router.get('/', productController.getAllProducts);
+router.get('/', getAllProducts);
 
-router.get('/filter/categories', productController.getCategories);
+// 📂 Get all unique product categories
+router.get('/filter/categories', getCategories);
 
 // 🔍 Get a single product by ID
-router.get('/:id', productController.getProductById);
+router.get('/:id', getProductById);
 
 // ✏ Update a product
-router.put('/:id', productController.updateProduct);
+router.put('/:id', updateProduct);
 
 // ❌ Delete a product
-router.delete('/:id', productController.deleteProduct);
-//
+router.delete('/:id', deleteProduct);
+
 module.exports = router;

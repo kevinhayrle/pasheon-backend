@@ -31,6 +31,7 @@ app.use(express.json());
 console.log('✅ express.json middleware loaded');
 
 // Register routes
+try {
   const adminRoutes = require('./routes/adminRoutes');
   const authRoutes = require('./routes/auth');
   const productRoutes = require('./routes/productRoutes');
@@ -39,6 +40,10 @@ console.log('✅ express.json middleware loaded');
   app.use('/api/auth', authRoutes);
   app.use('/api/products', productRoutes);
   console.log('✅ Routes registered');
+} catch (err) {
+  console.error('❌ Error loading routes:', err.message);
+}
+
 // Health check
 app.get('/', (req, res) => {
   res.send('Pasheon backend is running ✅');
