@@ -13,6 +13,8 @@ router.post('/', productController.addProduct);
 // 📦 Get all products (GET /api/products)
 router.get('/', productController.getAllProducts);
 
+router.get('/filter/categories', productController.getCategories);
+
 // 🔍 Get a single product by ID
 router.get('/:id', productController.getProductById);
 

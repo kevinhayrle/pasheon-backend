@@ -126,3 +126,15 @@ exports.deleteProduct = async (req, res) => {
     res.status(500).json({ error: 'Failed to delete product.' });
   }
 };
+
+// 📂 Get all unique product categories
+exports.getCategories = async (req, res) => {
+  try {
+    const [rows] = await db.query('SELECT DISTINCT category FROM products WHERE category IS NOT NULL AND category != ""');
+    const categories = rows.map(row => row.category);
+    res.json(categories);
+  } catch (err) {
+    console.error('Error fetching categories:', err.message);
+    res.status(500).json({ error: 'Server error while fetching categories.' });
+  }
+};
