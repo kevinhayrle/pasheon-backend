@@ -1,14 +1,14 @@
 const db = require('../db');
 
 // Get all products
-const getAllProducts = (req, res) => {
-  db.query('SELECT * FROM products ORDER BY created_at DESC', (err, results) => {
-    if (err) {
-      console.error('💥 Failed to fetch products:', err.message); // NEW line added
-      return res.status(500).json({ error: 'Failed to fetch products' });
-    }
+const getAllProducts = async (req, res) => {
+  try {
+    const [results] = await db.query('SELECT * FROM products ORDER BY created_at DESC');
     res.status(200).json(results);
-  });
+  } catch (err) {
+    console.error('💥 Failed to fetch products:', err.message);
+    res.status(500).json({ error: 'Failed to fetch products' });
+  }
 };
 
 // Delete product by ID
