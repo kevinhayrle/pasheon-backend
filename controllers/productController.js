@@ -1,3 +1,5 @@
+// controllers/productController.js
+
 const db = require('../db');
 
 // ➕ Add new product
@@ -31,59 +33,34 @@ exports.getAllProducts = async (req, res) => {
   }
 };
 
-// 🔍 Get single product by ID (with extra images and sizes)
+// 🔍 Get single product by ID
 exports.getProductById = async (req, res) => {
   const { id } = req.params;
 
   try {
-    const [rows] = await db.query('SELECT * FROM products WHERE id = ?', [id]);
+    const [rows] = await db.query('SELECT * FROM products WHERE product_id = ?', [id]);
 
     if (rows.length === 0) {
       return res.status(404).json({ error: 'Product not found.' });
     }
 
-    const product = rows[0];
-
-    // Get extra images
-    const [imageRows] = await db.query(
-      'SELECT image_url FROM product_images WHERE product_id = ?',
-      [id]
-    );
-    product.extra_images = imageRows.map(row => row.image_url);
-
-    // Get sizes
-    const [sizeRows] = await db.query(
-      'SELECT size FROM product_sizes WHERE product_id = ?',
-      [id]
-    );
-    product.sizes = sizeRows.map(row => row.size);
-
-    res.json(product);
+    res.json(rows[0]);
   } catch (err) {
     console.error('Error fetching product by ID:', err);
     res.status(500).json({ error: 'Server error.' });
   }
 };
-// ✏ Update product (including sizes)
+
+// ✏ Update product
 exports.updateProduct = async (req, res) => {
   const { id } = req.params;
-  const { name, description, price, image_url, category, sizes } = req.body;
+  const { name, description, price, image_url, category } = req.body;
 
   try {
-    // Update main product info
     await db.query(
-      'UPDATE products SET name = ?, description = ?, price = ?, image_url = ?, category = ? WHERE id = ?',
+      'UPDATE products SET name = ?, description = ?, price = ?, image_url = ?, category = ? WHERE product_id = ?',
       [name, description, price, image_url, category, id]
     );
-
-    // Replace old sizes with new ones
-    await db.query('DELETE FROM product_sizes WHERE product_id = ?', [id]);
-
-    if (sizes && sizes.length > 0) {
-      const sizeInsertValues = sizes.map(size => [id, size]);
-      await db.query('INSERT INTO product_sizes (product_id, size) VALUES ?', [sizeInsertValues]);
-    }
-
     res.json({ message: 'Product updated successfully.' });
   } catch (err) {
     console.error('Error updating product:', err);
@@ -96,8 +73,7 @@ exports.deleteProduct = async (req, res) => {
   const { id } = req.params;
 
   try {
-    // ✅ Changed product_id to id
-    await db.query('DELETE FROM products WHERE id = ?', [id]);
+    await db.query('DELETE FROM products WHERE product_id = ?', [id]);
     res.json({ message: 'Product deleted successfully.' });
   } catch (err) {
     console.error('Error deleting product:', err);
