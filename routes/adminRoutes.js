@@ -1,11 +1,23 @@
 const express = require('express');
 const router = express.Router();
-const adminAuthController = require('../controllers/adminAuthController');
+const verifyToken = require('../middleware/verifyToken');
+const { adminLogin } = require('../controllers/adminAuthController');
+const {
+  getAllProducts,
+  deleteProduct,
+  addProduct,
+} = require('../controllers/adminProductController');
 
-router.get('/test', (req, res) => {
-  res.send('✅ Admin route working');
-});
+// Admin login
+router.post('/login', adminLogin);
 
-router.post('/login', adminAuthController.adminLogin);
+// Get all products (protected)
+router.get('/products', verifyToken, getAllProducts);
+
+// Delete product by ID (protected)
+router.delete('/delete/:id', verifyToken, deleteProduct);
+
+// Add new product (protected)
+router.post('/add', verifyToken, addProduct);
 
 module.exports = router;
