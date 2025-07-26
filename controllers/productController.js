@@ -51,16 +51,26 @@ exports.getProductById = async (req, res) => {
   }
 };
 
-// ✏ Update product
 exports.updateProduct = async (req, res) => {
   const { id } = req.params;
   const { name, description, price, image_url, category } = req.body;
 
+  console.log('Update request:', { id, name, description, price, image_url, category });
+
+  if (!id || !name || !description || !price || !image_url || !category) {
+    return res.status(400).json({ error: 'All fields are required.' });
+  }
+
   try {
-    await db.query(
+    const [result] = await db.query(
       'UPDATE products SET name = ?, description = ?, price = ?, image_url = ?, category = ? WHERE product_id = ?',
       [name, description, price, image_url, category, id]
     );
+
+    if (result.affectedRows === 0) {
+      return res.status(404).json({ error: 'Product not found or no changes made.' });
+    }
+
     res.json({ message: 'Product updated successfully.' });
   } catch (err) {
     console.error('Error updating product:', err);
