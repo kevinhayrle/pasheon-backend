@@ -1,5 +1,3 @@
-// controllers/productController.js
-
 const db = require('../db');
 
 // ➕ Add new product
@@ -38,8 +36,8 @@ exports.getProductById = async (req, res) => {
   const { id } = req.params;
 
   try {
-    // 1. Get the main product
-    const [rows] = await db.query('SELECT * FROM products WHERE product_id = ?', [id]);
+    // ✅ Changed product_id to id
+    const [rows] = await db.query('SELECT * FROM products WHERE id = ?', [id]);
 
     if (rows.length === 0) {
       return res.status(404).json({ error: 'Product not found.' });
@@ -47,13 +45,12 @@ exports.getProductById = async (req, res) => {
 
     const product = rows[0];
 
-    // 2. Get all extra images for this product
+    // ✅ This stays as product_id — it's correct
     const [imageRows] = await db.query(
       'SELECT image_url FROM product_images WHERE product_id = ?',
       [id]
     );
 
-    // 3. Format the result to include extra images
     product.extra_images = imageRows.map(row => row.image_url);
 
     res.json(product);
@@ -69,8 +66,9 @@ exports.updateProduct = async (req, res) => {
   const { name, description, price, image_url, category } = req.body;
 
   try {
+    // ✅ Changed product_id to id
     await db.query(
-      'UPDATE products SET name = ?, description = ?, price = ?, image_url = ?, category = ? WHERE product_id = ?',
+      'UPDATE products SET name = ?, description = ?, price = ?, image_url = ?, category = ? WHERE id = ?',
       [name, description, price, image_url, category, id]
     );
     res.json({ message: 'Product updated successfully.' });
@@ -85,7 +83,8 @@ exports.deleteProduct = async (req, res) => {
   const { id } = req.params;
 
   try {
-    await db.query('DELETE FROM products WHERE product_id = ?', [id]);
+    // ✅ Changed product_id to id
+    await db.query('DELETE FROM products WHERE id = ?', [id]);
     res.json({ message: 'Product deleted successfully.' });
   } catch (err) {
     console.error('Error deleting product:', err);
