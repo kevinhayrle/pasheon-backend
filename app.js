@@ -13,7 +13,7 @@ const allowedOrigins = [
   'http://localhost:5500'
   // You can add more frontends here
 ];
-
+// commmenttt
 app.use(cors({
   origin: function (origin, callback) {
     if (!origin || allowedOrigins.includes(origin)) {
