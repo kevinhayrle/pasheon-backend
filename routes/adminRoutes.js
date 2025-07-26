@@ -6,6 +6,7 @@ const {
   getAllProducts,
   deleteProduct,
   addProduct,
+  updateProduct
 } = require('../controllers/adminProductController');
 
 // Admin login
@@ -19,5 +20,7 @@ router.delete('/delete/:id', verifyToken, deleteProduct);
 
 // Add new product (protected)
 router.post('/add', verifyToken, addProduct);
+
+router.put('/update/:id', verifyToken, updateProduct);
 
 module.exports = router;
