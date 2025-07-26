@@ -8,7 +8,9 @@ const app = express();
 console.log('👋 Pasheon backend started');
 
 const allowedOrigins = [
-  'https://kevinhayrle.github.io'  // You can add more frontends here
+  'https://kevinhayrle.github.io',  
+  'http://127.0.0.1:5500'
+  // You can add more frontends here
 ];
 
 app.use(cors({
