@@ -2,32 +2,17 @@ const db = require('../db');
 
 // ➕ Add new product
 exports.addProduct = async (req, res) => {
-  const { name, description, price, image_url, category, sizes = [], extra_images = [] } = req.body;
+  const { name, description, price, image_url, category } = req.body;
 
   if (!name || !price || !image_url) {
     return res.status(400).json({ error: 'Name, price, and image are required.' });
   }
 
   try {
-    const [result] = await db.query(
+    await db.query(
       'INSERT INTO products (name, description, price, image_url, category, created_at) VALUES (?, ?, ?, ?, ?, NOW())',
       [name, description, price, image_url, category]
     );
-
-    const productId = result.insertId;
-
-    // Insert sizes
-    if (sizes.length > 0) {
-      const sizeValues = sizes.map(size => [productId, size]);
-      await db.query('INSERT INTO product_sizes (product_id, size) VALUES ?', [sizeValues]);
-    }
-
-    // Insert extra images
-    if (extra_images.length > 0) {
-      const imageValues = extra_images.map(url => [productId, url]);
-      await db.query('INSERT INTO product_images (product_id, image_url) VALUES ?', [imageValues]);
-    }
-
     res.status(201).json({ message: 'Product added successfully.' });
   } catch (err) {
     console.error('Error adding product:', err);
@@ -42,7 +27,7 @@ exports.getAllProducts = async (req, res) => {
     res.json(rows);
   } catch (err) {
     console.error('Error fetching products:', err.message);
-    res.status(500).json({ error: 'Server error.' });
+    res.status(500).json({ error: 'server error.' });
   }
 };
 
@@ -59,12 +44,14 @@ exports.getProductById = async (req, res) => {
 
     const product = rows[0];
 
+    // Get extra images
     const [imageRows] = await db.query(
       'SELECT image_url FROM product_images WHERE product_id = ?',
       [id]
     );
     product.extra_images = imageRows.map(row => row.image_url);
 
+    // Get sizes
     const [sizeRows] = await db.query(
       'SELECT size FROM product_sizes WHERE product_id = ?',
       [id]
@@ -77,30 +64,24 @@ exports.getProductById = async (req, res) => {
     res.status(500).json({ error: 'Server error.' });
   }
 };
-
-// ✏ Update product (including sizes and extra images)
+// ✏ Update product (including sizes)
 exports.updateProduct = async (req, res) => {
   const { id } = req.params;
-  const { name, description, price, image_url, category, sizes = [], extra_images = [] } = req.body;
+  const { name, description, price, image_url, category, sizes } = req.body;
 
   try {
+    // Update main product info
     await db.query(
       'UPDATE products SET name = ?, description = ?, price = ?, image_url = ?, category = ? WHERE id = ?',
       [name, description, price, image_url, category, id]
     );
 
-    // Replace sizes
+    // Replace old sizes with new ones
     await db.query('DELETE FROM product_sizes WHERE product_id = ?', [id]);
-    if (sizes.length > 0) {
+
+    if (sizes && sizes.length > 0) {
       const sizeInsertValues = sizes.map(size => [id, size]);
       await db.query('INSERT INTO product_sizes (product_id, size) VALUES ?', [sizeInsertValues]);
-    }
-
-    // Replace extra images
-    await db.query('DELETE FROM product_images WHERE product_id = ?', [id]);
-    if (extra_images.length > 0) {
-      const imageInsertValues = extra_images.map(url => [id, url]);
-      await db.query('INSERT INTO product_images (product_id, image_url) VALUES ?', [imageInsertValues]);
     }
 
     res.json({ message: 'Product updated successfully.' });
@@ -115,10 +96,8 @@ exports.deleteProduct = async (req, res) => {
   const { id } = req.params;
 
   try {
+    // ✅ Changed product_id to id
     await db.query('DELETE FROM products WHERE id = ?', [id]);
-    await db.query('DELETE FROM product_images WHERE id = ?', [id]);
-    await db.query('DELETE FROM sizes WHERE id = ?', [id]);
-
     res.json({ message: 'Product deleted successfully.' });
   } catch (err) {
     console.error('Error deleting product:', err);
