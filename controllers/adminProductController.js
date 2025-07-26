@@ -4,6 +4,7 @@ const db = require('../db');
 const getAllProducts = (req, res) => {
   db.query('SELECT * FROM products ORDER BY created_at DESC', (err, results) => {
     if (err) {
+      console.error('💥 Failed to fetch products:', err.message); // NEW line added
       return res.status(500).json({ error: 'Failed to fetch products' });
     }
     res.status(200).json(results);
